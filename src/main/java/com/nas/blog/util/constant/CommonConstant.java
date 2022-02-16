@@ -1,4 +1,4 @@
-package com.nas.blog.constant;
+package com.nas.blog.util.constant;
 
 public class CommonConstant {
 

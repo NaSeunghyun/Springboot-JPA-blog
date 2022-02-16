@@ -1,7 +1,7 @@
 package com.nas.blog.config.auth;
 
-import com.nas.blog.model.RoleType;
 import com.nas.blog.entity.User;
+import com.nas.blog.user.model.RoleType;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

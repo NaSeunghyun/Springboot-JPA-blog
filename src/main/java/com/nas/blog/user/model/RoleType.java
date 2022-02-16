@@ -1,4 +1,4 @@
-package com.nas.blog.model;
+package com.nas.blog.user.model;
 
 public enum RoleType {
     ADMIN,USER

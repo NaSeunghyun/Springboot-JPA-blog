@@ -1,4 +1,4 @@
-package com.nas.blog.controller;
+package com.nas.blog.user.controller;
 
 
 import org.springframework.stereotype.Controller;

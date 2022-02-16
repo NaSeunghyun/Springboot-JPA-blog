@@ -1,6 +1,6 @@
 package com.nas.blog.entity;
 
-import com.nas.blog.constant.CommonConstant;
+import com.nas.blog.util.constant.CommonConstant;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;

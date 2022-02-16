@@ -1,6 +1,6 @@
 package com.nas.blog.entity;
 
-import com.nas.blog.model.RoleType;
+import com.nas.blog.user.model.RoleType;
 import lombok.*;
 
 import javax.persistence.*;
