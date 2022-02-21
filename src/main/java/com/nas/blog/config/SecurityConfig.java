@@ -1,6 +1,7 @@
 package com.nas.blog.config;
 
 import com.nas.blog.config.auth.PrincipalDetailService;
+import com.nas.blog.config.oauth2.PrincipalOauth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
@@ -23,10 +24,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final PrincipalDetailService principalDetailService;
+    private final PrincipalOauth2UserService principalOauth2UserService;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(principalDetailService).passwordEncoder(passwordEncoder());
+        auth.userDetailsService(principalDetailService).passwordEncoder(passwordEncoder);
     }
 
     @Override
@@ -46,11 +49,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .loginPage("/auth/loginForm")
                 .usernameParameter("email")
                 .loginProcessingUrl("/auth/login")
-                .defaultSuccessUrl("/");
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+                .defaultSuccessUrl("/")
+                .and()
+                .oauth2Login()
+                .loginPage("/auth/loginForm")
+                .userInfoEndpoint()
+                .userService(principalOauth2UserService);
     }
 }

@@ -5,13 +5,16 @@ import com.nas.blog.user.model.RoleType;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 
 @Getter
-public class PrincipalDetail implements UserDetails {
+public class PrincipalDetail implements UserDetails, OAuth2User {
     private User user;
+    private Map<String,Object> attributes;
 
     public Long getId() {
         return user.getId();
@@ -19,6 +22,16 @@ public class PrincipalDetail implements UserDetails {
 
     public PrincipalDetail(User user) {
         this.user = user;
+    }
+
+    public PrincipalDetail(User user, Map<String, Object> attributes) {
+        this.user = user;
+        this.attributes = attributes;
+    }
+
+    @Override
+    public Map<String, Object> getAttributes() {
+        return attributes;
     }
 
     @Override
@@ -64,4 +77,8 @@ public class PrincipalDetail implements UserDetails {
         return true;
     }
 
+    @Override
+    public String getName() {
+        return null;
+    }
 }
