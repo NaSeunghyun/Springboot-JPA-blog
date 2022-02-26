@@ -18,11 +18,17 @@ public class GlobalExceptionHandler {
 
     private final MessageSource messageSource;
 
+    @ExceptionHandler
+    public ResponseEntity<ExceptionResponse> exceptionHandler(final AuthenticationException e){
+        log.error("AuthenticationException", e);
+        return ResponseEntity.status(e.getError().getStatus()).body(ExceptionResponse.of(e.getError()));
+    }
+
     @ExceptionHandler(value = FieldException.class)
     public ResponseEntity<ExceptionResponse> exceptionHandler(final FieldException e) {
         log.error("FieldException", e);
         CustomFieldError error = new CustomFieldError(e.getError(), e.getField(), e.getParams());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ExceptionResponse.of(error));
+        return ResponseEntity.status(e.getError().getStatus()).body(ExceptionResponse.of(error));
     }
 
     @ExceptionHandler(value = IllegalArgumentException.class)

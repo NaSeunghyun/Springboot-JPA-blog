@@ -32,12 +32,13 @@
         </label>
       </div>
 
-      <button class="w-100 btn btn-lg btn-primary" type="submit" th:text="#{signin}">Sign in</button>
     </form>
+    <button class="w-100 btn btn-lg btn-primary" id="btn-login" th:text="#{signin}">Sign in</button>
   </main>
 
   <div th:replace="/fragments/footer.html :: fragment-footer"></div>
-
+  <script src="/js/common.js"></script>
+  <script src="/js/user.js"></script>
 </body>
 
 </html>

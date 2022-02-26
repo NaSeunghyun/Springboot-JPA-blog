@@ -1,6 +1,8 @@
 package com.nas.blog.config;
 
 import com.nas.blog.config.auth.PrincipalDetailService;
+import com.nas.blog.config.jwt.JwtAuthenticationFilter;
+import com.nas.blog.config.jwt.JwtEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
@@ -12,8 +14,12 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import static org.springframework.security.config.http.SessionCreationPolicy.*;
 
 @RequiredArgsConstructor
 @Configuration
@@ -23,6 +29,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final PrincipalDetailService principalDetailService;
+    private final JwtEntryPoint jwtEntryPoint;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -39,14 +47,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .csrf().disable()
                 .authorizeHttpRequests()
-                .antMatchers("/", "/auth/**").permitAll()
+                .antMatchers("/", "/auth/**","/exception/**").permitAll()
                 .anyRequest().authenticated()
+
                 .and()
-                .formLogin()
-                .loginPage("/auth/loginForm")
-                .usernameParameter("email")
-                .loginProcessingUrl("/auth/login")
-                .defaultSuccessUrl("/");
+                .exceptionHandling()
+                .authenticationEntryPoint(jwtEntryPoint)
+
+                .and()
+                .logout().disable()
+                .formLogin().disable()
+                .httpBasic().disable()
+                .sessionManagement().sessionCreationPolicy(STATELESS)
+
+                .and()
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
     @Bean

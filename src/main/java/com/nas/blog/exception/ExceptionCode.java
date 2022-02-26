@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 public enum ExceptionCode {
     RUNTIME_EXCEPTION(HttpStatus.BAD_REQUEST, "E0001"),
     ACCESS_DENIED_EXCEPTION(HttpStatus.UNAUTHORIZED, "E0002"),
-    FAIL_LOGIN(HttpStatus.BAD_REQUEST, "E0003"),
+    FAIL_LOGIN(HttpStatus.UNAUTHORIZED, "E0003"),
     DUPLICATE_EMAIL(HttpStatus.BAD_REQUEST, "E0004"),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "S0001");
 
