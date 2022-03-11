@@ -12,6 +12,6 @@ public class ExceptionController {
 
     @GetMapping("entrypoint")
     public void entrypointException(){
-        throw new AuthenticationException(FAIL_LOGIN);
+
     }
 }

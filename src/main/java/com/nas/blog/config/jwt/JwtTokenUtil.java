@@ -1,6 +1,5 @@
 package com.nas.blog.config.jwt;
 
-import com.nas.blog.config.auth.PrincipalDetail;
 import com.nas.blog.dto.TokenDto;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
@@ -80,16 +79,22 @@ public class JwtTokenUtil {
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
-    public Cookie createCookie(String cookieName, String email) {
-        String token = null;
-        if (JwtHeaderUtilEnums.ACCESS_TOKEN_NAME.getValue().equals(cookieName)) {
-            token = generateAccessToken(email);
-        } else if (JwtHeaderUtilEnums.REFRESH_TOKEN_NAME.getValue().equals(cookieName)) {
-            token = generateRefreshToken(email);
-        }
+    public Cookie createRefreshTokenCookie(String token) {
+        Cookie cookie = createCookie(JwtHeaderUtilEnums.REFRESH_TOKEN_NAME.getValue(), token);
+        cookie.setMaxAge((int) JwtExpirationEnums.REFRESH_TOKEN_EXPIRATION_TIME.getValue());
+        return cookie;
+    }
+
+    public Cookie createAccessTokenCookie(String token) {
+        Cookie cookie = createCookie(JwtHeaderUtilEnums.ACCESS_TOKEN_NAME.getValue(), token);
+        cookie.setMaxAge((int) JwtExpirationEnums.ACCESS_TOKEN_EXPIRATION_TIME.getValue());
+        return cookie;
+    }
+
+    public Cookie createCookie(String cookieName, String token) {
         Cookie cookie = new Cookie(cookieName, token);
         cookie.setHttpOnly(true);
-        cookie.setMaxAge((int) JwtExpirationEnums.ACCESS_TOKEN_EXPIRATION_TIME.getValue());
+        cookie.setSecure(true);
         cookie.setPath("/");
         return cookie;
     }
@@ -109,8 +114,21 @@ public class JwtTokenUtil {
         return null;
     }
 
+    public Cookie removeCookie(String cookieName){
+        Cookie cookie = new Cookie(cookieName , "");
+        cookie.setPath("/");
+        cookie.setMaxAge(0);
+        return cookie;
+    }
+
     public TokenDto generateTokenDto(String email) {
         String accessToken = generateAccessToken(email);
         return TokenDto.of(accessToken);
+    }
+
+    public Long getExpiration(String token){
+        Date expiration = parseClaims(token).getExpiration();
+        Date now = new Date();
+        return expiration.getTime() - now.getTime();
     }
 }

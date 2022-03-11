@@ -1,4 +1,4 @@
-package com.nas.blog.config.auth;
+package com.nas.blog.auth;
 
 import com.nas.blog.entity.User;
 import com.nas.blog.user.model.RoleType;

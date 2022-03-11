@@ -50,7 +50,9 @@
     </div>
   </div>
 
-  <div th:replace="/fragments/footer.html :: fragment-footer"></div>
+<div th:replace="/fragments/footer.html :: fragment-footer(~{::script})">
+<script></script>
+</div>
 
 </body>
 

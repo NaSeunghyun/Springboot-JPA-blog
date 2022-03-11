@@ -9,7 +9,7 @@
     
     <div th:replace="/fragments/nav.html :: fragment-nav"></div>
     
-    <main class="container p-4 p-md-5 mb-4">
+    <main class="container p-4 p-md-5 mb-4" style="text-align: left;">
       <form>
 
         <div class="form-group mb-2">
@@ -21,14 +21,14 @@
         </div>
 
       </form>
-      <button class="w-100 btn btn-lg btn-primary" id="btn-join">登録</button>
+      <button class="w-100 btn btn-lg btn-primary" id="btn-save" th:text="#{registration}">등록</button>
     </main>
 
-    <div th:replace="/fragments/footer.html :: fragment-footer"></div>
-
     <link rel="stylesheet" href="/css/summernote/summernote-lite.css">
+    <div th:replace="/fragments/footer.html :: fragment-footer(~{::script})">
     <script src="/js/summernote/summernote-lite.js"></script>
     <script src="/js/summernote/lang/summernote-ko-KR.js"></script>
     <script src="/js/summernote.js"></script>
+    </div>
     </body>
 </html>

@@ -1,6 +1,12 @@
-package com.nas.blog.user.service;
+package com.nas.blog.auth.service;
 
-import com.nas.blog.config.auth.PrincipalDetail;
+import com.nas.blog.auth.PrincipalDetail;
+import com.nas.blog.auth.repository.LogoutAccessTokenRedisRepository;
+import com.nas.blog.auth.repository.RefreshTokenRedisRepository;
+import com.nas.blog.auth.token.LogoutAccessToken;
+import com.nas.blog.auth.token.RefreshToken;
+import com.nas.blog.config.jwt.JwtExpirationEnums;
+import com.nas.blog.config.jwt.JwtHeaderUtilEnums;
 import com.nas.blog.config.jwt.JwtTokenUtil;
 import com.nas.blog.dto.TokenDto;
 import com.nas.blog.entity.User;
@@ -20,9 +26,11 @@ import static com.nas.blog.exception.ExceptionCode.*;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class UserService {
+public class AuthService {
 
     private final UserRepository userRepository;
+    private final RefreshTokenRedisRepository refreshTokenRedisRepository;
+    private final LogoutAccessTokenRedisRepository logoutAccessTokenRedisRepository;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenUtil jwtTokenUtil;
 
@@ -31,7 +39,7 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public String login(LoginForm loginForm) {
+    public TokenDto login(LoginForm loginForm) {
         // Login EMAIL/PW 를 기반으로 AuthenticationToken 생성
         UsernamePasswordAuthenticationToken authenticationToken = loginForm.toAuthentication();
 
@@ -40,13 +48,28 @@ public class UserService {
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         PrincipalDetail principalDetail = (PrincipalDetail) authentication.getPrincipal();
 
-        return principalDetail.getUser().getEmail();
+        String email = principalDetail.getUser().getEmail();
+        String accessToken = jwtTokenUtil.generateAccessToken(email);
+        RefreshToken refreshToken = saveRefreshToken(email);
+
+        return TokenDto.of(accessToken, refreshToken.getRefreshToken());
 
     }
 
+    public void logout(String accessToken) {
+        String email = jwtTokenUtil.getEmail(accessToken);
+        refreshTokenRedisRepository.deleteById(email);
+        logoutAccessTokenRedisRepository.save(LogoutAccessToken.of(accessToken, email, jwtTokenUtil.getExpiration(accessToken)));
+    }
+
     private void existUserEmail(User user) {
-        if (userRepository.existsByEmail(user.getEmail())){
+        if (userRepository.existsByEmail(user.getEmail())) {
             throw new FieldException(DUPLICATE_EMAIL, FieldConstant.EMAIL);
         }
+    }
+
+    private RefreshToken saveRefreshToken(String email) {
+        String refreshToken = jwtTokenUtil.generateRefreshToken(email);
+        return refreshTokenRedisRepository.save(RefreshToken.createRefreshToken(email, refreshToken, JwtExpirationEnums.REFRESH_TOKEN_EXPIRATION_TIME.getValue()));
     }
 }

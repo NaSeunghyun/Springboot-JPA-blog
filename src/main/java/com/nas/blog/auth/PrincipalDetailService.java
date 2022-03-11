@@ -1,15 +1,12 @@
-package com.nas.blog.config.auth;
+package com.nas.blog.auth;
 
 import com.nas.blog.entity.User;
-import com.nas.blog.exception.FieldException;
 import com.nas.blog.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
-import static com.nas.blog.exception.ExceptionCode.*;
 
 @RequiredArgsConstructor
 @Service
@@ -25,6 +22,6 @@ public class PrincipalDetailService implements UserDetailsService {
 
     private User getPrincipal(String email) {
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+                .orElseThrow(() -> new IllegalArgumentException("이메일 또는 패스워드가 잘못되었습니다."));
     }
 }

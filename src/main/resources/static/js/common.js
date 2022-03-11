@@ -5,7 +5,7 @@ var commonMethod = {
     $.ajax({
       type: method,
       url: url,
-      headers: {"Authorization" : localStorage.access},
+      headers: { "Authorization": localStorage.access },
       data: JSON.stringify(data), // body데이터
       contentType: "application/json; charset=utf-8", // body타입 MIME
       dataType: "json",
@@ -17,9 +17,13 @@ var commonMethod = {
         $("#loader").hide();
       }
     }).done(function (xhr) {
-      fn_doneCallback(xhr);
+      if (fn_doneCallback) {
+        fn_doneCallback(xhr);
+      }
     }).fail(function (xhr, textStatus) {
-      fn_failCallback(xhr);
+      if (fn_failCallback) {
+        fn_failCallback(xhr);
+      }
     });
   },
 

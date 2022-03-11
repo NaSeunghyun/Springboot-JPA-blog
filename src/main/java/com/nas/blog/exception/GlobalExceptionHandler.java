@@ -5,6 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationServiceException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -18,10 +21,10 @@ public class GlobalExceptionHandler {
 
     private final MessageSource messageSource;
 
-    @ExceptionHandler
+    @ExceptionHandler(value = AuthenticationException.class)
     public ResponseEntity<ExceptionResponse> exceptionHandler(final AuthenticationException e){
-        log.error("AuthenticationException", e);
-        return ResponseEntity.status(e.getError().getStatus()).body(ExceptionResponse.of(e.getError()));
+        log.error("AuthenticationServiceException", e);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ExceptionResponse.of(FAIL_LOGIN));
     }
 
     @ExceptionHandler(value = FieldException.class)
